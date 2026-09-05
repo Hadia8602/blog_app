@@ -1,7 +1,7 @@
-const express = require('express');
-const cors = require('cors');
-const connectDB = require('./db');
-const Post = require('./models/Post');
+import express from 'express';
+import cors from 'cors';
+import connectDB from './db.js';
+import Post from './models/Post.js';
 
 const app = express();
 
@@ -9,29 +9,27 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-// Connect to MongoDB
-connectDB();
-
-// Routes
-app.get('/api/posts', async (req, res) => {
-  try {
-    const posts = await Post.find().sort({ date: -1 });
-    res.json(posts);
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ message: 'Server Error' });
-  }
-});
-
+// Health check (no DB needed)
 app.get('/api/health', (req, res) => {
   res.json({ ok: true, service: 'api' });
 });
 
-module.exports = app;
+// Get posts
+app.get('/api/posts', async (req, res) => {
+  try {
+    await connectDB();
+    const posts = await Post.find().sort({ date: -1 });
+    res.json(posts);
+  } catch (error) {
+    console.error('Error fetching posts:', error);
+    res.status(500).json({ error: error.message });
+  }
+});
 
+export default app;
+
+// Local development
 if (!process.env.VERCEL) {
   const PORT = process.env.PORT || 3000;
-  app.listen(PORT, () => {
-    console.log(`✅ Server running on port ${PORT}`);
-  });
+  app.listen(PORT, () => console.log(`✅ Server running on port ${PORT}`));
 }
