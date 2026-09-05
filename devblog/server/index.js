@@ -1,69 +1,37 @@
-import express from 'express';
-import cors from 'cors';
-import connectDB from './db.js';
-import Post from './models/Post.js';
+require("dotenv").config();
+const express = require("express");
+const mongoose = require("mongoose");
+const cors = require("cors");
+const Post = require("./models/Post");
 
 const app = express();
-
-// Middleware
-app.use(cors());
 app.use(express.json());
+app.use(cors({ origin: process.env.CLIENT_URL }));
 
-// Connect to MongoDB
-connectDB();
+// MongoDB connection
+let dbReady;
+const connectDB = () => dbReady ??=
+  mongoose.connect(process.env.MONGODB_URI);
+
+app.use(async (_req, _res, next) => {
+  try { await connectDB(); next(); }
+  catch (error) { next(error); }
+});
 
 // Routes
-app.get('/api/posts', async (req, res) => {
+app.get("/api/posts", async (req, res) => {
   try {
     const posts = await Post.find().sort({ date: -1 });
     res.json(posts);
   } catch (error) {
     console.error(error);
-    res.status(500).json({ message: 'Server Error' });
+    res.status(500).json({ message: "Server Error" });
   }
 });
 
-app.get('/api/posts/:id', async (req, res) => {
-  try {
-    const post = await Post.findById(req.params.id);
-    if (!post) {
-      return res.status(404).json({ message: 'Post not found' });
-    }
-    res.json(post);
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ message: 'Server Error' });
-  }
-});
+app.get("/api/health", (_, res) =>
+  res.json({ ok: true, service: "api" }));
 
-app.post('/api/posts', async (req, res) => {
-  try {
-    const post = await Post.create(req.body);
-    res.status(201).json(post);
-  } catch (error) {
-    res.status(400).json({ error: error.message });
-  }
-});
+module.exports = app;
 
-app.delete('/api/posts/:id', async (req, res) => {
-  try {
-    const post = await Post.findByIdAndDelete(req.params.id);
-    if (!post) {
-      return res.status(404).json({ error: 'Post not found' });
-    }
-    res.json({ message: 'Post deleted successfully' });
-  } catch (error) {
-    if (error.kind === 'ObjectId') {
-      return res.status(400).json({ error: 'Invalid post ID' });
-    }
-    res.status(500).json({ error: error.message });
-  }
-});
-
-// Health check endpoint
-app.get('/api/health', (req, res) => {
-  res.json({ ok: true, service: 'api' });
-});
-
-// ✅ Export for Vercel
-export default app;
+if (!process.env.VERCEL) app.listen(3000);
