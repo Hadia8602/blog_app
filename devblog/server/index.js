@@ -61,15 +61,15 @@ app.delete('/api/posts/:id', async (req, res) => {
   }
 });
 
-// Health check endpoint (for Vercel)
+// ✅ Health check endpoint
 app.get('/api/health', (req, res) => {
   res.json({ ok: true, service: 'api' });
 });
 
-// ✅ This is the key change for Vercel
+// ✅ Export for Vercel
 export default app;
 
-// For local development
+// Local development
 if (process.env.NODE_ENV !== 'production') {
   app.listen(PORT, () => {
     console.log(`✅ Server running on port ${PORT}`);
