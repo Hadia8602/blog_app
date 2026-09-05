@@ -9,7 +9,7 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-// Health check (no DB needed)
+// Health check - NO database connection
 app.get('/api/health', (req, res) => {
   res.json({ ok: true, service: 'api' });
 });
@@ -22,7 +22,10 @@ app.get('/api/posts', async (req, res) => {
     res.json(posts);
   } catch (error) {
     console.error('Error fetching posts:', error);
-    res.status(500).json({ error: error.message });
+    res.status(500).json({ 
+      error: 'Database error',
+      message: error.message 
+    });
   }
 });
 
@@ -31,5 +34,7 @@ export default app;
 // Local development
 if (!process.env.VERCEL) {
   const PORT = process.env.PORT || 3000;
-  app.listen(PORT, () => console.log(`✅ Server running on port ${PORT}`));
+  app.listen(PORT, () => {
+    console.log(`✅ Server running on port ${PORT}`);
+  });
 }
