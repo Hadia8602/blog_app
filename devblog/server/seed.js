@@ -1,8 +1,5 @@
-import mongoose from 'mongoose';
-import connectDB from './db.js';
-import Post from './models/Post.js';
-
-
+const connectDB = require('./db');
+const Post = require('./models/Post');
 
 const posts = [
   {
@@ -59,13 +56,11 @@ const seedDB = async () => {
   try {
     await connectDB();
     
-   
     await Post.deleteMany();
     console.log('Cleared existing posts');
     
     const inserted = await Post.insertMany(posts);
-    console.log(` Seeded ${inserted.length} posts successfully!`);
-    
+    console.log(`✅ Seeded ${inserted.length} posts successfully!`);
     
     await mongoose.connection.close();
     console.log('Database connection closed');

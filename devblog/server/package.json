@@ -2,7 +2,8 @@
   "name": "server",
   "version": "1.0.0",
   "scripts": {
-    "start": "node index.js"
+    "start": "node index.js",
+    "seed": "node --env-file=.env seed.js"
   },
   "dependencies": {
     "cors": "^2.8.5",
