@@ -8,6 +8,18 @@
   ],
   "routes": [
     {
+      "src": "/api/health",
+      "dest": "server/index.js"
+    },
+    {
+      "src": "/api/posts",
+      "dest": "server/index.js"
+    },
+    {
+      "src": "/api/posts/(.*)",
+      "dest": "server/index.js"
+    },
+    {
       "src": "/(.*)",
       "dest": "server/index.js"
     }
