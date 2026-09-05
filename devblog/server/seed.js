@@ -2,6 +2,8 @@ import mongoose from 'mongoose';
 import connectDB from './db.js';
 import Post from './models/Post.js';
 
+
+
 const posts = [
   {
     title: "Getting Started with React",
