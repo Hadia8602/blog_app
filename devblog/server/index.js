@@ -4,7 +4,6 @@ import connectDB from './db.js';
 import Post from './models/Post.js';
 
 const app = express();
-const PORT = process.env.PORT || 3000;
 
 // Middleware
 app.use(cors());
@@ -61,17 +60,10 @@ app.delete('/api/posts/:id', async (req, res) => {
   }
 });
 
-// ✅ Health check endpoint
+// Health check endpoint
 app.get('/api/health', (req, res) => {
   res.json({ ok: true, service: 'api' });
 });
 
 // ✅ Export for Vercel
 export default app;
-
-// Local development
-if (process.env.NODE_ENV !== 'production') {
-  app.listen(PORT, () => {
-    console.log(`✅ Server running on port ${PORT}`);
-  });
-}
