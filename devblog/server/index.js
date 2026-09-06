@@ -9,12 +9,12 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-// Health check - NO database needed
+// Health check
 app.get('/api/health', (req, res) => {
   res.json({ ok: true, service: 'api' });
 });
 
-// Get posts
+// Get all posts
 app.get('/api/posts', async (req, res) => {
   try {
     await connectDB();
@@ -22,6 +22,21 @@ app.get('/api/posts', async (req, res) => {
     res.json(posts);
   } catch (error) {
     console.error('Error fetching posts:', error);
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// ✅ Get a single post by ID (ADD THIS)
+app.get('/api/posts/:id', async (req, res) => {
+  try {
+    await connectDB();
+    const post = await Post.findById(req.params.id);
+    if (!post) {
+      return res.status(404).json({ error: 'Post not found' });
+    }
+    res.json(post);
+  } catch (error) {
+    console.error('Error fetching post:', error);
     res.status(500).json({ error: error.message });
   }
 });
