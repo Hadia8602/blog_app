@@ -8,6 +8,10 @@ const app = express();
 // Middleware
 app.use(cors());
 app.use(express.json());
+app.use(cors({
+  origin: 'https://your-frontend-url.vercel.app', // Your frontend URL
+  credentials: true
+}));
 
 // Health check
 app.get('/api/health', (req, res) => {
