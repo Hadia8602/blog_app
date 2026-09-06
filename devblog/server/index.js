@@ -9,7 +9,7 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 app.use(cors({
-  origin: 'https://your-frontend-url.vercel.app', // Your frontend URL
+  origin: 'https://blog-app-fjm7-9np35bwe7-hadi-008c.vercel.app', // Your frontend URL
   credentials: true
 }));
 
