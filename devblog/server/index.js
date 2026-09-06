@@ -5,13 +5,20 @@ const Post = require('./models/Post');
 
 const app = express();
 
-// Middleware
-app.use(cors());
-app.use(express.json());
+// CORS configuration - Use ONE cors() call
 app.use(cors({
-  origin: 'https://blog-app-fjm7-9np35bwe7-hadi-008c.vercel.app', // Your frontend URL
-  credentials: true
+  origin: '*',  // Allow all origins for now (simplest fix)
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization']
 }));
+
+// OR if you want to be specific:
+// app.use(cors({
+//   origin: 'https://blog-app-fjm7.vercel.app', // Your ACTUAL frontend URL
+//   credentials: true
+// }));
+
+app.use(express.json());
 
 // Health check
 app.get('/api/health', (req, res) => {
@@ -30,7 +37,7 @@ app.get('/api/posts', async (req, res) => {
   }
 });
 
-// ✅ Get a single post by ID (ADD THIS)
+// Get a single post by ID
 app.get('/api/posts/:id', async (req, res) => {
   try {
     await connectDB();
